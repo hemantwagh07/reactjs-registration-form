@@ -1,0 +1,21 @@
+import React from 'react'
+
+export default function DropdownField(props) {
+    let dropdownop = [];
+    for (let index = 0; index < props.dropdownoptions.length; index++) {
+        dropdownop.push(<><option value={props.dropdownoptions[index].optionValue}>{props.dropdownoptions[index].optionText}</option></>);
+    }
+    return (
+        <div className="form-group row">
+            <label className="col-sm-2 col-form-label" htmlFor={props.name}>{props.displaylbl}</label>
+            <div className="col-sm-10">
+                <select value={props.fieldvalue} className="custom-select" name={props.name} id={props.id} onChange={props.onchangefun}>
+                    {dropdownop.map((item, ind) => {
+                        return <React.Fragment key={ind}>{item}</React.Fragment>;
+                    })}
+                </select>
+                {props.validationError !== undefined && props.validationError !== '' ? <span className='errormsg'>{props.validationError}</span> : ''}
+            </div>
+        </div>
+    )
+}
