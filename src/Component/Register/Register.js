@@ -4,101 +4,15 @@ import InputField from '../FormElement/InputField';
 import RadioFieldGroup from '../FormElement/RadioFieldGroup';
 import CheckboxFieldGroup from '../FormElement/CheckboxFieldGroup';
 import DropdownField from '../FormElement/DropdownField';
+import helper from './RegisterHelper';
 
 export default class Register extends Component {
     userData = [];
     currentEdit = false;
-    radioGroup = [
-        {
-            name: 'gender',
-            id: 'male',
-            value: 'Male',
-            displaylbl: 'Male'
-        },
-        {
-            name: 'gender',
-            id: 'female',
-            value: 'Female',
-            displaylbl: 'Female'
-        }
-    ];
-    checkboxGroup = [
-        {
-            name: 'language',
-            id: 'marathi',
-            value: 'Marathi',
-            displaylbl: 'Marathi'
 
-        },
-        {
-            name: 'language',
-            id: 'hindi',
-            value: 'Hindi',
-            displaylbl: 'Hindi'
-
-        },
-        {
-            name: 'language',
-            id: 'english',
-            value: 'English',
-            displaylbl: 'English'
-
-        }
-    ];
-    languageDD = [
-        {
-            optionValue: '',
-            optionText: 'Please Select Location'
-        },
-        {
-            optionValue: 'Pune',
-            optionText: 'Pune'
-        },
-        {
-            optionValue: 'Delhi',
-            optionText: 'Delhi'
-        },
-        {
-            optionValue: 'Mumbai',
-            optionText: 'Mumbai'
-        },
-        {
-            optionValue: 'Kolkata',
-            optionText: 'Kolkata'
-        }
-    ];
-    initialState = {
-        fname: '',
-        lname: '',
-        emailid: '',
-        mobileno: '',
-        gender: '',
-        language: [],
-        location: '',
-        errors: {
-            fname: '',
-            lname: '',
-            emailid: '',
-            mobileno: '',
-            gender: '',
-            language: '',
-            location: ''
-        }
-    }
-    errormessages = {
-        required: {
-            fname: 'First Name is required',
-            lname: 'Last Name is required',
-            emailid: 'Email id is required',
-            mobileno: 'Mobile number is required',
-            gender: 'Select any Gender',
-            language: 'Select atleast one language',
-            location: 'Select any location',
-        }
-    }
     constructor(props) {
         super(props);
-        this.state = this.initialState;
+        this.state = helper.initialState;
     }
     validateForm = () => {
         let errors = { ...this.state.errors };
@@ -106,34 +20,34 @@ export default class Register extends Component {
         let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         let valid = true;
         if (this.state.fname === '') {
-            errors.fname = this.errormessages.required.fname;
+            errors.fname = helper.errormessages.required.fname;
             valid = false;
         }
         if (this.state.lname === '') {
-            errors.lname = this.errormessages.required.lname;
+            errors.lname = helper.errormessages.required.lname;
             valid = false;
         }
         if (this.state.emailid === '') {
-            errors.emailid = this.errormessages.required.emailid;
+            errors.emailid = helper.errormessages.required.emailid;
             valid = false;
         } else if (emailPattern.test(this.state.emailid) === false) {
             errors.emailid = 'Email id is invalid';
             valid = false;
         }
         if (this.state.mobileno === '') {
-            errors.mobileno = this.errormessages.required.mobileno;
+            errors.mobileno = helper.errormessages.required.mobileno;
             valid = false;
         }
         if (this.state.gender === '') {
-            errors.gender = this.errormessages.required.gender;
+            errors.gender = helper.errormessages.required.gender;
             valid = false;
         }
         if (this.state.location === '') {
-            errors.location = this.errormessages.required.location;
+            errors.location = helper.errormessages.required.location;
             valid = false;
         }
         if (this.state.language.length < 1) {
-            errors.language = this.errormessages.required.language;
+            errors.language = helper.errormessages.required.language;
             valid = false;
         }
         if (valid === false) {
@@ -144,27 +58,30 @@ export default class Register extends Component {
     }
     submitHandler = (e) => {
         e.preventDefault();
+
         if (this.validateForm()) {
-            this.userData.push(this.state);
-            this.setState(this.initialState);
-            this.setState({ language: [] });
+            let { fname, lname, emailid, mobileno, gender, language, location, userData } = this.state;
+            userData.push({ fname, lname, emailid, mobileno, gender, language, location });
+            fname = lname = emailid = mobileno = gender = location = '';
+            language = [];
+            this.setState({ fname, lname, emailid, mobileno, gender, language, location, userData });
         }
-
-
     }
+
     updateHandler = (e) => {
         e.preventDefault();
         if (this.validateForm()) {
             if (window.confirm("Do you want to update?")) {
-                let { fname, lname, emailid, mobileno, gender, language, location } = this.state;
-                this.userData[this.currentEdit] = {
+                let { fname, lname, emailid, mobileno, gender, language, location, userData } = this.state;
+                userData[this.currentEdit] = {
                     fname: fname, lname: lname,
                     emailid: emailid, mobileno: mobileno,
                     gender: gender, language: language,
                     location: location,
                 }
-                this.setState(this.initialState);
-                this.setState({ language: [] });
+                fname = lname = emailid = mobileno = gender = location = '';
+                language = [];
+                this.setState({ fname, lname, emailid, mobileno, gender, language, location, userData });
                 this.currentEdit = false;
             }
         }
@@ -176,7 +93,7 @@ export default class Register extends Component {
             errors[name] = '';
             this.setState({ errors });
         } else {
-            errors[name] = this.errormessages.required[name];
+            errors[name] = helper.errormessages.required[name];
             this.setState({ errors });
         }
         this.setState({
@@ -205,15 +122,16 @@ export default class Register extends Component {
     }
     onEditClick = (id) => {
         console.log('Edit clicked', id);
-        let currentUserData = this.userData[id];
+        let currentUserData = this.state.userData[id];
         this.setState({ ...currentUserData });
         this.currentEdit = id;
     }
     onDeleteClick = (id) => {
         console.log('Delete clicked', id);
         if (window.confirm("Do you want to delete?")) {
-            this.userData.splice(id, 1);
-            this.forceUpdate();
+            let { userData } = this.state;
+            userData.splice(id, 1);
+            this.setState({ userData });
         }
     }
 
@@ -242,17 +160,17 @@ export default class Register extends Component {
                         fieldvalue={this.state.mobileno} displaylbl="Mobile No"
                         validationError={this.state.errors.mobileno}
                     />
-                    <RadioFieldGroup radiobtninfo={this.radioGroup} radioGrouplbl="Gender"
+                    <RadioFieldGroup radiobtninfo={helper.radioGroup} radioGrouplbl="Gender"
                         onchangefun={this.radioChangeHandler}
                         fieldvalue={this.state.gender}
                         validationError={this.state.errors.gender}></RadioFieldGroup>
 
-                    <CheckboxFieldGroup checkboxinfo={this.checkboxGroup} checkboxGrouplbl="Language"
+                    <CheckboxFieldGroup checkboxinfo={helper.checkboxGroup} checkboxGrouplbl="Language"
                         onchangefun={this.checkboxChangeHandler}
                         fieldvalue={this.state.language}
                         validationError={this.state.errors.language}></CheckboxFieldGroup>
 
-                    <DropdownField dropdownoptions={this.languageDD} name="location" id="location"
+                    <DropdownField dropdownoptions={helper.languageDD} name="location" id="location"
                         fieldvalue={this.state.location} displaylbl="Location"
                         onchangefun={this.textChangeHandler}
                         validationError={this.state.errors.location}></DropdownField>
@@ -268,7 +186,7 @@ export default class Register extends Component {
 
                 </form>
                 <br />
-                {this.userData.length > 0 ? <Table deleteclicked={this.onDeleteClick} data={this.userData} editclicked={this.onEditClick} /> : ''}
+                {this.state.userData.length > 0 ? <Table deleteclicked={this.onDeleteClick} data={this.state.userData} editclicked={this.onEditClick} /> : ''}
             </div>
         )
     }
