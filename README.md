@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-**To run this on your local : Download and run `npm install` in project folder**
+**To run this on your local : Download and copy this in project folder and run `npm install` in project folder**
 
 ## Available Scripts
 
